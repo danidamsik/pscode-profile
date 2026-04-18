@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="min-h-screen bg-white text-zinc-900 antialiased">
+    <div class="min-h-screen bg-white text-zinc-900 antialiased dark:bg-tokyo-bg dark:text-tokyo-text">
         <SiteNavbar :can-login="canLogin" :can-register="canRegister" />
         <main ref="mainElement">
             <slot />

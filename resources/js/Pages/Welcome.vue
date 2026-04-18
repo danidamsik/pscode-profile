@@ -46,6 +46,7 @@ const props = defineProps({
 const selectedTeamMember = ref(null);
 const selectedPortfolio = ref(null);
 const selectedPortfolioImageIndex = ref(0);
+const selectedPortfolioCategory = ref('all');
 const page = usePage();
 
 const testimonialForm = useForm({
@@ -224,6 +225,42 @@ const enrichedPortfolios = computed(() =>
     }),
 );
 
+const portfolioCategoryLabels = {
+    all: 'Semua',
+    website: 'Website',
+    mobile: 'Mobile App',
+    other: 'Digital Product',
+};
+
+const portfolioCategoryOrder = ['website', 'mobile', 'other'];
+const portfolioCategoryPosition = (category) => {
+    const index = portfolioCategoryOrder.indexOf(category);
+
+    return index === -1 ? portfolioCategoryOrder.length : index;
+};
+
+const portfolioTabs = computed(() => {
+    const availableCategories = [...new Set(enrichedPortfolios.value.map((portfolio) => portfolio.category))]
+        .filter(Boolean)
+        .sort((first, second) => portfolioCategoryPosition(first) - portfolioCategoryPosition(second));
+
+    return [
+        { label: portfolioCategoryLabels.all, value: 'all' },
+        ...availableCategories.map((category) => ({
+            label: portfolioCategoryLabels[category] ?? category,
+            value: category,
+        })),
+    ];
+});
+
+const filteredPortfolios = computed(() => {
+    if (selectedPortfolioCategory.value === 'all') {
+        return enrichedPortfolios.value;
+    }
+
+    return enrichedPortfolios.value.filter((portfolio) => portfolio.category === selectedPortfolioCategory.value);
+});
+
 const activePortfolioImages = computed(() => activePortfolio.value?.images ?? []);
 const activePortfolioImage = computed(() => activePortfolioImages.value[selectedPortfolioImageIndex.value]);
 const displayTestimonials = computed(() => (props.testimonials.length ? props.testimonials : fallbackTestimonials));
@@ -351,24 +388,24 @@ const serviceIconLabel = (icon) => ({
     <PublicLayout :can-login="canLogin" :can-register="canRegister">
         <section
             id="beranda"
-            class="relative isolate min-h-[76svh] scroll-mt-20 overflow-hidden bg-zinc-950 py-20 text-white sm:py-24"
+            class="relative isolate min-h-[76svh] scroll-mt-20 overflow-hidden bg-zinc-950 py-20 text-white dark:bg-tokyo-bg dark:text-tokyo-text sm:py-24"
         >
             <img
                 src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=80"
                 alt="Tim digital agency sedang berdiskusi di ruang kerja modern"
                 class="absolute inset-0 -z-10 h-full w-full object-cover opacity-45"
             />
-            <div class="absolute inset-0 -z-10 bg-zinc-950/55"></div>
+            <div class="absolute inset-0 -z-10 bg-zinc-950/55 dark:bg-tokyo-bg/80"></div>
 
             <div class="mx-auto grid min-h-[62svh] w-full max-w-7xl items-center gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
                 <div class="max-w-3xl">
-                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-300">
+                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-300 dark:text-tokyo-purple">
                         Solusi Digital Modern untuk Website dan Mobile Apps
                     </p>
                     <h1 class="mt-5 text-4xl font-bold tracking-normal">
                         Bangun platform digital yang dipercaya client sejak kunjungan pertama.
                     </h1>
-                    <p class="mt-6 max-w-2xl text-base leading-7 text-zinc-100">
+                    <p class="mt-6 max-w-2xl text-base leading-7 text-zinc-100 dark:text-tokyo-muted">
                         PSCode membantu bisnis menampilkan brand, menjelaskan layanan, mengelola portfolio, dan membuka
                         komunikasi dengan calon client melalui website company profile yang profesional.
                     </p>
@@ -378,25 +415,25 @@ const serviceIconLabel = (icon) => ({
                     </div>
                 </div>
 
-                <div class="grid gap-5 rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur">
+                <div class="grid gap-5 rounded-lg border border-white/15 bg-white/10 p-5 backdrop-blur dark:border-tokyo-border dark:bg-tokyo-surface/70">
                     <div>
-                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-300">Fokus Project</p>
-                        <p class="mt-3 text-2xl font-bold text-white">
+                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-300 dark:text-tokyo-purple">Fokus Project</p>
+                        <p class="mt-3 text-2xl font-bold text-white dark:text-tokyo-text">
                             Branding, sistem, dan aplikasi dalam satu alur kerja.
                         </p>
                     </div>
                     <div class="grid gap-4 sm:grid-cols-3">
-                        <div class="rounded-lg border border-white/15 p-4">
+                        <div class="rounded-lg border border-white/15 p-4 dark:border-tokyo-border">
                             <p class="text-2xl font-bold">01</p>
-                            <p class="mt-2 text-sm text-zinc-100">Discovery kebutuhan</p>
+                            <p class="mt-2 text-sm text-zinc-100 dark:text-tokyo-muted">Discovery kebutuhan</p>
                         </div>
-                        <div class="rounded-lg border border-white/15 p-4">
+                        <div class="rounded-lg border border-white/15 p-4 dark:border-tokyo-border">
                             <p class="text-2xl font-bold">02</p>
-                            <p class="mt-2 text-sm text-zinc-100">Desain dan build</p>
+                            <p class="mt-2 text-sm text-zinc-100 dark:text-tokyo-muted">Desain dan build</p>
                         </div>
-                        <div class="rounded-lg border border-white/15 p-4">
+                        <div class="rounded-lg border border-white/15 p-4 dark:border-tokyo-border">
                             <p class="text-2xl font-bold">03</p>
-                            <p class="mt-2 text-sm text-zinc-100">Rilis dan support</p>
+                            <p class="mt-2 text-sm text-zinc-100 dark:text-tokyo-muted">Rilis dan support</p>
                         </div>
                     </div>
                 </div>
@@ -411,9 +448,9 @@ const serviceIconLabel = (icon) => ({
                         title="Partner pengembangan digital untuk kebutuhan bisnis yang nyata."
                         description="Kami membantu perusahaan, brand, dan pelaku usaha merapikan ide menjadi produk digital yang mudah dipahami pengguna, mudah dikelola admin, dan siap dikembangkan setelah rilis."
                     />
-                    <div class="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-6">
-                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">Visi</p>
-                        <p class="mt-3 text-xl font-bold text-zinc-950">
+                    <div class="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-6 dark:border-tokyo-border dark:bg-tokyo-surface">
+                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-700 dark:text-tokyo-purple">Visi</p>
+                        <p class="mt-3 text-xl font-bold text-zinc-950 dark:text-tokyo-text">
                             Membuat solusi digital yang terasa jelas untuk client, rapi untuk tim, dan berguna untuk
                             pertumbuhan bisnis.
                         </p>
@@ -422,8 +459,8 @@ const serviceIconLabel = (icon) => ({
 
                 <div class="grid gap-4">
                     <BaseCard v-for="value in companyValues" :key="value[0]">
-                        <h3 class="text-lg font-bold text-zinc-950">{{ value[0] }}</h3>
-                        <p class="mt-3 text-sm leading-6 text-zinc-600">{{ value[1] }}</p>
+                        <h3 class="text-lg font-bold text-zinc-950 dark:text-tokyo-text">{{ value[0] }}</h3>
+                        <p class="mt-3 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">{{ value[1] }}</p>
                     </BaseCard>
                 </div>
             </div>
@@ -432,7 +469,6 @@ const serviceIconLabel = (icon) => ({
                 <SectionHeading
                     eyebrow="Tim Pengembang"
                     title="Orang yang menjaga arah, tampilan, kode, dan kualitas project."
-                    description="Setiap anggota membawa peran yang saling melengkapi agar proses kerja tetap terukur dari awal sampai rilis."
                 />
 
                 <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -440,14 +476,18 @@ const serviceIconLabel = (icon) => ({
                         v-for="member in enrichedTeamMembers"
                         :key="member.id"
                         type="button"
-                        class="overflow-hidden rounded-lg border border-zinc-200 bg-white text-left shadow-sm transition hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                        class="flex h-full flex-col items-center rounded-lg border border-zinc-200 bg-white p-6 text-center shadow-sm transition hover:-translate-y-1 hover:border-emerald-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-tokyo-border dark:bg-tokyo-surface dark:hover:border-tokyo-blue dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-bg"
                         @click="showTeamMember(member)"
                     >
-                        <img :src="member.photo_url" :alt="member.name" class="h-56 w-full object-cover" />
-                        <div class="p-5">
-                            <h3 class="text-lg font-bold text-zinc-950">{{ member.name }}</h3>
-                            <p class="mt-1 text-sm font-semibold text-emerald-700">{{ member.role }}</p>
-                            <p class="mt-3 text-sm leading-6 text-zinc-600">
+                        <img
+                            :src="member.photo_url"
+                            :alt="member.name"
+                            class="h-28 w-28 rounded-full border-4 border-white object-cover object-top shadow-md ring-1 ring-zinc-200 dark:border-tokyo-surface dark:ring-tokyo-border"
+                        />
+                        <div class="mt-5">
+                            <h3 class="text-lg font-bold text-zinc-950 dark:text-tokyo-text">{{ member.name }}</h3>
+                            <p class="mt-1 text-sm font-semibold text-emerald-700 dark:text-tokyo-blue">{{ member.role }}</p>
+                            <p class="mt-3 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
                                 {{ member.description }}
                             </p>
                         </div>
@@ -464,12 +504,12 @@ const serviceIconLabel = (icon) => ({
                     description="Setiap layanan disiapkan agar proses branding, operasional, dan interaksi pelanggan berjalan lebih tertata."
                 />
 
-                <div class="rounded-lg border border-zinc-200 bg-white p-6">
-                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">Output yang disiapkan</p>
-                    <div class="mt-4 grid gap-3 text-sm font-semibold text-zinc-700 sm:grid-cols-3">
-                        <p class="rounded-lg bg-zinc-50 px-4 py-3">Struktur konten</p>
-                        <p class="rounded-lg bg-zinc-50 px-4 py-3">Desain responsive</p>
-                        <p class="rounded-lg bg-zinc-50 px-4 py-3">Admin-ready</p>
+                <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-tokyo-border dark:bg-tokyo-surface">
+                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-700 dark:text-tokyo-purple">Output yang disiapkan</p>
+                    <div class="mt-4 grid gap-3 text-sm font-semibold text-zinc-700 dark:text-tokyo-text sm:grid-cols-3">
+                        <p class="rounded-lg bg-zinc-50 px-4 py-3 dark:bg-tokyo-panel">Struktur konten</p>
+                        <p class="rounded-lg bg-zinc-50 px-4 py-3 dark:bg-tokyo-panel">Desain responsive</p>
+                        <p class="rounded-lg bg-zinc-50 px-4 py-3 dark:bg-tokyo-panel">Admin-ready</p>
                     </div>
                 </div>
             </div>
@@ -477,13 +517,13 @@ const serviceIconLabel = (icon) => ({
             <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
                 <BaseCard v-for="service in displayServices" :key="service.id">
                     <div
-                        class="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-sm font-bold text-emerald-800"
+                        class="flex h-12 w-12 items-center justify-center rounded-lg bg-emerald-100 text-sm font-bold text-emerald-800 dark:bg-tokyo-blue/15 dark:text-tokyo-blue"
                     >
                         {{ serviceIconLabel(service.icon) }}
                     </div>
-                    <h3 class="mt-5 text-lg font-bold text-zinc-950">{{ service.title }}</h3>
-                    <p class="mt-3 text-sm leading-6 text-zinc-600">{{ service.description }}</p>
-                    <a href="#kontak" class="mt-5 inline-flex text-sm font-bold text-emerald-700 hover:text-emerald-900">
+                    <h3 class="mt-5 text-lg font-bold text-zinc-950 dark:text-tokyo-text">{{ service.title }}</h3>
+                    <p class="mt-3 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">{{ service.description }}</p>
+                    <a href="#kontak" class="mt-5 inline-flex text-sm font-bold text-emerald-700 hover:text-emerald-900 dark:text-tokyo-blue dark:hover:text-tokyo-cyan">
                         Diskusikan kebutuhan
                     </a>
                 </BaseCard>
@@ -498,24 +538,24 @@ const serviceIconLabel = (icon) => ({
                     description="Calon client tahu apa yang perlu disiapkan, kapan review dilakukan, dan bagaimana project bergerak sampai launch."
                 />
                 <div class="relative">
-                    <div class="absolute left-5 top-5 hidden h-[calc(100%-2.5rem)] w-px bg-zinc-200 sm:block"></div>
+                    <div class="absolute left-5 top-5 hidden h-[calc(100%-2.5rem)] w-px bg-zinc-200 dark:bg-tokyo-panel sm:block"></div>
 
                     <div class="grid gap-5">
                         <article
                             v-for="(step, index) in displayOrderSteps"
                             :key="step.id"
-                            class="relative rounded-lg border border-zinc-200 bg-white p-5 shadow-sm sm:ms-16"
+                            class="relative rounded-lg border border-zinc-200 bg-white p-5 shadow-sm dark:border-tokyo-border dark:bg-tokyo-surface sm:ms-16"
                         >
                             <div
-                                class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-950 text-sm font-bold text-white sm:absolute sm:-left-16 sm:top-5"
+                                class="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-950 text-sm font-bold text-white dark:bg-tokyo-blue dark:text-tokyo-bg sm:absolute sm:-left-16 sm:top-5"
                             >
                                 {{ String(index + 1).padStart(2, '0') }}
                             </div>
-                            <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">
+                            <p class="text-sm font-bold uppercase tracking-normal text-emerald-700 dark:text-tokyo-purple">
                                 Tahap {{ index + 1 }}
                             </p>
-                            <h3 class="mt-2 text-lg font-bold text-zinc-950">{{ step.title }}</h3>
-                            <p class="mt-3 text-sm leading-6 text-zinc-600">{{ step.description }}</p>
+                            <h3 class="mt-2 text-lg font-bold text-zinc-950 dark:text-tokyo-text">{{ step.title }}</h3>
+                            <p class="mt-3 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">{{ step.description }}</p>
                         </article>
                     </div>
                 </div>
@@ -523,47 +563,62 @@ const serviceIconLabel = (icon) => ({
         </SectionContainer>
 
         <SectionContainer id="portfolio" tone="dark">
-            <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-                <SectionHeading
-                    eyebrow="Portfolio"
-                    title="Project yang pernah dikerjakan untuk kebutuhan web dan mobile."
-                    description="Setiap project ditampilkan dengan gambaran fungsi, kategori, teknologi, dan visual pendukung agar calon client bisa menilai arah solusi dengan cepat."
-                />
-                <div class="rounded-lg border border-white/10 bg-white/5 p-6">
-                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-300">Kategori Project</p>
-                    <div class="mt-4 flex flex-wrap gap-3 text-sm font-semibold text-white">
-                        <span class="rounded-lg bg-white/10 px-4 py-2">Website</span>
-                        <span class="rounded-lg bg-white/10 px-4 py-2">Dashboard</span>
-                        <span class="rounded-lg bg-white/10 px-4 py-2">Mobile App</span>
-                    </div>
+            <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+                <div class="max-w-3xl">
+                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-300 dark:text-tokyo-purple">Portofolio</p>
+                    <h2 class="mt-2 text-3xl font-bold tracking-normal text-white dark:text-tokyo-text">
+                        Project yang pernah dikerjakan untuk kebutuhan web dan mobile.
+                    </h2>
+                    <p class="mt-3 max-w-2xl text-base leading-7 text-zinc-300 dark:text-tokyo-muted">
+                        Setiap project ditampilkan dengan gambaran fungsi, kategori, teknologi, dan visual pendukung agar calon client bisa menilai arah solusi dengan cepat.
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap gap-2 lg:justify-end" role="tablist" aria-label="Filter project portfolio">
+                    <button
+                        v-for="tab in portfolioTabs"
+                        :key="tab.value"
+                        type="button"
+                        role="tab"
+                        :aria-selected="selectedPortfolioCategory === tab.value"
+                        class="rounded-lg border px-4 py-2 text-sm font-bold transition focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-zinc-950 dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-bg"
+                        :class="
+                            selectedPortfolioCategory === tab.value
+                                ? 'border-emerald-300 bg-emerald-400 text-zinc-950 dark:border-tokyo-blue dark:bg-tokyo-blue dark:text-tokyo-bg'
+                                : 'border-white/15 bg-white/5 text-white hover:border-emerald-300 hover:bg-white/10 dark:border-tokyo-border dark:bg-tokyo-surface/70 dark:text-tokyo-text dark:hover:border-tokyo-blue dark:hover:bg-tokyo-panel'
+                        "
+                        @click="selectedPortfolioCategory = tab.value"
+                    >
+                        {{ tab.label }}
+                    </button>
                 </div>
             </div>
 
             <div class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 <button
-                    v-for="item in enrichedPortfolios"
+                    v-for="item in filteredPortfolios"
                     :key="item.id"
                     type="button"
-                    class="group overflow-hidden rounded-lg border border-white/10 bg-white/5 text-left transition hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-zinc-950"
+                    class="group overflow-hidden rounded-lg border border-white/10 bg-white/5 text-left transition hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:ring-offset-2 focus:ring-offset-zinc-950 dark:border-tokyo-border dark:bg-tokyo-surface/70 dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-bg"
                     @click="showPortfolio(item)"
                 >
                     <div class="relative">
                         <img :src="item.thumbnail_url" :alt="item.title" class="h-56 w-full object-cover" />
-                        <div class="absolute left-4 top-4 rounded-lg bg-zinc-950/80 px-3 py-2 text-xs font-bold text-white">
+                        <div class="absolute left-4 top-4 rounded-lg bg-zinc-950/80 px-3 py-2 text-xs font-bold text-white dark:bg-tokyo-bg/90 dark:text-tokyo-text">
                             {{ item.category_label }}
                         </div>
                     </div>
                     <div class="p-5">
-                        <p class="text-sm font-semibold text-emerald-300">{{ item.client_name }}</p>
-                        <h3 class="mt-2 text-xl font-bold text-white">{{ item.title }}</h3>
-                        <p class="mt-3 text-sm leading-6 text-zinc-300">
+                        <p class="text-sm font-semibold text-emerald-300 dark:text-tokyo-blue">{{ item.client_name }}</p>
+                        <h3 class="mt-2 text-xl font-bold text-white dark:text-tokyo-text">{{ item.title }}</h3>
+                        <p class="mt-3 text-sm leading-6 text-zinc-300 dark:text-tokyo-muted">
                             {{ item.short_description }}
                         </p>
                         <div class="mt-5 flex flex-wrap gap-2">
                             <span
                                 v-for="technology in item.technologies.slice(0, 3)"
                                 :key="technology"
-                                class="rounded-lg bg-white/10 px-3 py-1 text-xs font-semibold text-zinc-100"
+                                class="rounded-lg bg-white/10 px-3 py-1 text-xs font-semibold text-zinc-100 dark:bg-tokyo-panel dark:text-tokyo-muted"
                             >
                                 {{ technology }}
                             </span>
@@ -574,39 +629,26 @@ const serviceIconLabel = (icon) => ({
         </SectionContainer>
 
         <SectionContainer id="testimoni" tone="light">
-            <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-                <div>
-                    <SectionHeading
-                        eyebrow="Testimoni"
-                        title="Review client yang membantu calon partner menilai proses kerja."
-                        description="Guest dapat membaca testimoni yang sudah disetujui. User login dapat mengirim komentar dan rating untuk direview admin."
-                    />
+            <div class="grid gap-8">
+                <SectionHeading
+                    eyebrow="Testimoni"
+                    title="Review client yang membantu calon partner menilai proses kerja."
+                />
 
-                    <div class="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-6">
-                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">
-                            Rating hanya 1 sampai 5
-                        </p>
-                        <p class="mt-3 text-sm leading-6 text-zinc-600">
-                            Setiap testimoni baru disimpan dengan status menunggu persetujuan agar konten publik tetap
-                            rapi dan relevan.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="grid gap-5">
+                <div class="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.78fr)] lg:items-start">
                     <div class="grid gap-5 md:grid-cols-2">
                         <BaseCard v-for="testimonial in displayTestimonials" :key="testimonial.id">
-                            <div class="flex gap-1 text-lg text-emerald-600" aria-label="Rating testimoni">
+                            <div class="flex gap-1 text-lg text-emerald-600 dark:text-tokyo-blue" aria-label="Rating testimoni">
                                 <span v-for="star in 5" :key="star">
                                     {{ star <= testimonial.rating ? '★' : '☆' }}
                                 </span>
                             </div>
-                            <p class="mt-4 text-sm leading-6 text-zinc-700">
+                            <p class="mt-4 text-sm leading-6 text-zinc-700 dark:text-tokyo-muted">
                                 {{ testimonial.comment }}
                             </p>
                             <div class="mt-5 flex items-center gap-3">
                                 <UserAvatar :user="testimonial.user" size="sm" />
-                                <p class="text-sm font-bold text-zinc-950">
+                                <p class="text-sm font-bold text-zinc-950 dark:text-tokyo-text">
                                     {{ testimonial.user?.name ?? 'Client' }}
                                 </p>
                             </div>
@@ -615,26 +657,26 @@ const serviceIconLabel = (icon) => ({
 
                     <form
                         v-if="canSubmitTestimonial"
-                        class="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm"
+                        class="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm dark:border-tokyo-border dark:bg-tokyo-surface lg:sticky lg:top-24"
                         @submit.prevent="submitTestimonial"
                     >
-                        <p class="text-lg font-bold text-zinc-950">Bagikan pengalamanmu</p>
-                        <p class="mt-2 text-sm leading-6 text-zinc-600">
+                        <p class="text-lg font-bold text-zinc-950 dark:text-tokyo-text">Bagikan pengalamanmu</p>
+                        <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
                             Komentar akan tampil setelah disetujui admin.
                         </p>
 
                         <div class="mt-5">
-                            <span class="text-sm font-semibold text-zinc-800">Rating</span>
+                            <span class="text-sm font-semibold text-zinc-800 dark:text-tokyo-text">Rating</span>
                             <div class="mt-2 flex flex-wrap gap-2">
                                 <button
                                     v-for="rating in 5"
                                     :key="rating"
                                     type="button"
-                                    class="flex h-11 w-11 items-center justify-center rounded-lg border text-lg font-bold transition"
+                                    class="flex h-11 w-11 items-center justify-center rounded-lg border text-lg font-bold transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-surface"
                                     :class="
                                         testimonialForm.rating === rating
-                                            ? 'border-emerald-600 bg-emerald-600 text-white'
-                                            : 'border-zinc-300 bg-white text-zinc-700 hover:border-emerald-600'
+                                            ? 'border-emerald-600 bg-emerald-600 text-white dark:border-tokyo-blue dark:bg-tokyo-blue dark:text-tokyo-bg'
+                                            : 'border-zinc-300 bg-white text-zinc-700 hover:border-emerald-600 dark:border-tokyo-border dark:bg-tokyo-bg dark:text-tokyo-text'
                                     "
                                     @click="testimonialForm.rating = rating"
                                 >
@@ -647,13 +689,13 @@ const serviceIconLabel = (icon) => ({
                         </div>
 
                         <label for="testimonial-comment" class="mt-5 block">
-                            <span class="text-sm font-semibold text-zinc-800">Komentar</span>
+                            <span class="text-sm font-semibold text-zinc-800 dark:text-tokyo-text">Komentar</span>
                             <textarea
                                 id="testimonial-comment"
                                 v-model="testimonialForm.comment"
                                 rows="5"
                                 placeholder="Ceritakan pengalaman bekerja sama dengan PSCode"
-                                class="mt-2 block w-full rounded-lg border-zinc-300 text-zinc-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                                class="mt-2 block w-full rounded-lg border-zinc-300 text-zinc-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:border-tokyo-border dark:bg-tokyo-bg dark:text-tokyo-text dark:placeholder:text-tokyo-comment dark:focus:border-tokyo-blue dark:focus:ring-tokyo-blue"
                             ></textarea>
                         </label>
                         <p v-if="testimonialForm.errors.comment" class="mt-2 text-sm text-red-600">
@@ -664,15 +706,15 @@ const serviceIconLabel = (icon) => ({
                             <BaseButton type="submit" :disabled="testimonialForm.processing">
                                 Kirim Testimoni
                             </BaseButton>
-                            <p v-if="testimonialForm.recentlySuccessful" class="text-sm font-semibold text-emerald-700">
+                            <p v-if="testimonialForm.recentlySuccessful" class="text-sm font-semibold text-emerald-700 dark:text-tokyo-blue">
                                 Testimoni terkirim dan menunggu persetujuan.
                             </p>
                         </div>
                     </form>
 
-                    <div v-else class="rounded-lg border border-zinc-200 bg-zinc-50 p-6">
-                        <p class="text-lg font-bold text-zinc-950">Ingin memberi testimoni?</p>
-                        <p class="mt-2 text-sm leading-6 text-zinc-600">
+                    <div v-else class="rounded-lg border border-zinc-200 bg-zinc-50 p-6 dark:border-tokyo-border dark:bg-tokyo-surface lg:sticky lg:top-24">
+                        <p class="text-lg font-bold text-zinc-950 dark:text-tokyo-text">Ingin memberi testimoni?</p>
+                        <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
                             Masuk sebagai user untuk mengirim komentar dan rating.
                         </p>
                         <div class="mt-5 flex flex-wrap gap-3">
@@ -694,9 +736,9 @@ const serviceIconLabel = (icon) => ({
                     title="Catatan singkat untuk keputusan digital yang lebih matang."
                     description="Artikel edukasi membantu calon client memahami kebutuhan, scope, dan pilihan solusi sebelum memulai project."
                 />
-                <div class="rounded-lg border border-zinc-200 bg-white p-6">
-                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">Insight terbaru</p>
-                    <p class="mt-3 text-sm leading-6 text-zinc-600">
+                <div class="rounded-lg border border-zinc-200 bg-white p-6 dark:border-tokyo-border dark:bg-tokyo-surface">
+                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-700 dark:text-tokyo-purple">Insight terbaru</p>
+                    <p class="mt-3 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
                         Baca artikel lengkap untuk memahami perencanaan, proses kerja, dan pilihan solusi digital.
                     </p>
                     <BaseButton :href="route('blog.index')" variant="secondary" class="mt-5">Lihat Semua Artikel</BaseButton>
@@ -708,15 +750,15 @@ const serviceIconLabel = (icon) => ({
                     v-for="(post, index) in displayLatestBlogs"
                     :key="post.id"
                     :href="route('blog.show', post.slug)"
-                    class="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+                    class="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-tokyo-border dark:bg-tokyo-surface dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-bg"
                 >
                     <img :src="post.thumbnail_url" :alt="post.title" class="h-48 w-full object-cover" />
                     <div class="p-5">
-                        <p class="text-sm font-semibold text-emerald-700">
+                        <p class="text-sm font-semibold text-emerald-700 dark:text-tokyo-blue">
                             {{ formatDate(post.published_at) }}
                         </p>
-                        <h3 class="mt-3 text-lg font-bold leading-7 text-zinc-950">{{ post.title }}</h3>
-                        <p class="mt-4 text-sm leading-6 text-zinc-600">
+                        <h3 class="mt-3 text-lg font-bold leading-7 text-zinc-950 dark:text-tokyo-text">{{ post.title }}</h3>
+                        <p class="mt-4 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
                             {{ post.excerpt }}
                         </p>
                     </div>
@@ -724,34 +766,34 @@ const serviceIconLabel = (icon) => ({
             </div>
         </SectionContainer>
 
-        <SectionContainer id="kontak" tone="green">
+        <SectionContainer id="kontak" tone="dark">
             <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
                 <div>
-                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-200">Kontak</p>
-                    <h2 class="mt-3 text-3xl font-bold tracking-normal text-white">
+                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-300 dark:text-tokyo-purple">Kontak</p>
+                    <h2 class="mt-3 text-3xl font-bold tracking-normal text-white dark:text-tokyo-text">
                         Ceritakan kebutuhan projectmu.
                     </h2>
-                    <p class="mt-4 text-base leading-7 text-emerald-50">
+                    <p class="mt-4 text-base leading-7 text-zinc-300 dark:text-tokyo-muted">
                         Mulai dari company profile sederhana, dashboard internal, sampai aplikasi mobile dengan alur
                         pemesanan.
                     </p>
-                    <div class="mt-8 rounded-lg border border-white/15 p-5">
-                        <p class="text-sm font-semibold text-emerald-100">Email</p>
-                        <p class="mt-1 text-lg font-bold text-white">hello@pscode.test</p>
+                    <div class="mt-8 rounded-lg border border-white/10 bg-white/5 p-5 dark:border-tokyo-border dark:bg-tokyo-surface/70">
+                        <p class="text-sm font-semibold text-zinc-300 dark:text-tokyo-muted">Email</p>
+                        <p class="mt-1 text-lg font-bold text-white dark:text-tokyo-text">hello@pscode.test</p>
                     </div>
                     <div class="mt-4 grid gap-4 sm:grid-cols-2">
-                        <div class="rounded-lg border border-white/15 p-5">
-                            <p class="text-sm font-semibold text-emerald-100">Jam Diskusi</p>
-                            <p class="mt-1 text-base font-bold text-white">Senin-Jumat, 09.00-17.00</p>
+                        <div class="rounded-lg border border-white/10 bg-white/5 p-5 dark:border-tokyo-border dark:bg-tokyo-surface/70">
+                            <p class="text-sm font-semibold text-zinc-300 dark:text-tokyo-muted">Jam Diskusi</p>
+                            <p class="mt-1 text-base font-bold text-white dark:text-tokyo-text">Senin-Jumat, 09.00-17.00</p>
                         </div>
-                        <div class="rounded-lg border border-white/15 p-5">
-                            <p class="text-sm font-semibold text-emerald-100">Respon Awal</p>
-                            <p class="mt-1 text-base font-bold text-white">Maksimal 1 hari kerja</p>
+                        <div class="rounded-lg border border-white/10 bg-white/5 p-5 dark:border-tokyo-border dark:bg-tokyo-surface/70">
+                            <p class="text-sm font-semibold text-zinc-300 dark:text-tokyo-muted">Respon Awal</p>
+                            <p class="mt-1 text-base font-bold text-white dark:text-tokyo-text">Maksimal 1 hari kerja</p>
                         </div>
                     </div>
                 </div>
 
-                <form class="rounded-lg bg-white p-6 text-zinc-950 shadow-sm" @submit.prevent="submitContact">
+                <form class="rounded-lg border border-white/10 bg-white p-6 text-zinc-950 shadow-sm dark:bg-tokyo-surface dark:text-tokyo-text" @submit.prevent="submitContact">
                     <div class="grid gap-5">
                         <div>
                             <BaseInput
@@ -777,13 +819,13 @@ const serviceIconLabel = (icon) => ({
                             </p>
                         </div>
                         <label for="message" class="block">
-                            <span class="text-sm font-semibold text-zinc-800">Pesan</span>
+                            <span class="text-sm font-semibold text-zinc-800 dark:text-tokyo-text">Pesan</span>
                             <textarea
                                 id="message"
                                 v-model="contactForm.message"
                                 rows="5"
                                 placeholder="Ceritakan kebutuhan website atau aplikasimu"
-                                class="mt-2 block w-full rounded-lg border-zinc-300 text-zinc-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                                class="mt-2 block w-full rounded-lg border-zinc-300 text-zinc-900 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:border-tokyo-border dark:bg-tokyo-bg dark:text-tokyo-text dark:placeholder:text-tokyo-comment dark:focus:border-tokyo-blue dark:focus:ring-tokyo-blue"
                             ></textarea>
                         </label>
                         <p v-if="contactForm.errors.message" class="text-sm text-red-600">
@@ -791,7 +833,7 @@ const serviceIconLabel = (icon) => ({
                         </p>
                         <div class="flex flex-wrap items-center gap-3">
                             <BaseButton type="submit" :disabled="contactForm.processing">Kirim Pesan</BaseButton>
-                            <p v-if="contactForm.recentlySuccessful" class="text-sm font-semibold text-emerald-700">
+                            <p v-if="contactForm.recentlySuccessful" class="text-sm font-semibold text-emerald-700 dark:text-tokyo-blue">
                                 Pesan terkirim. Tim kami akan menghubungi kamu secepatnya.
                             </p>
                         </div>
@@ -801,7 +843,7 @@ const serviceIconLabel = (icon) => ({
         </SectionContainer>
 
         <Modal :show="Boolean(activePortfolio)" max-width="2xl" @close="closePortfolio">
-            <div v-if="activePortfolio" class="bg-white">
+            <div v-if="activePortfolio" class="bg-white dark:bg-tokyo-surface">
                 <div class="relative bg-zinc-950">
                     <img
                         v-if="activePortfolioImage"
@@ -811,7 +853,7 @@ const serviceIconLabel = (icon) => ({
                     />
 
                     <div
-                        class="absolute left-4 top-4 rounded-lg bg-zinc-950/80 px-3 py-2 text-xs font-bold uppercase tracking-normal text-white"
+                        class="absolute left-4 top-4 rounded-lg bg-zinc-950/80 px-3 py-2 text-xs font-bold uppercase tracking-normal text-white dark:bg-tokyo-bg/90 dark:text-tokyo-text"
                     >
                         {{ activePortfolio.category_label }}
                     </div>
@@ -822,7 +864,7 @@ const serviceIconLabel = (icon) => ({
                     >
                         <button
                             type="button"
-                            class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-zinc-950"
+                            class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-zinc-950 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:bg-tokyo-text dark:text-tokyo-bg dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-bg"
                             aria-label="Gambar sebelumnya"
                             @click="showPreviousPortfolioImage"
                         >
@@ -830,7 +872,7 @@ const serviceIconLabel = (icon) => ({
                         </button>
                         <button
                             type="button"
-                            class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-zinc-950"
+                            class="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-zinc-950 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:bg-tokyo-text dark:text-tokyo-bg dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-bg"
                             aria-label="Gambar berikutnya"
                             @click="showNextPortfolioImage"
                         >
@@ -841,36 +883,36 @@ const serviceIconLabel = (icon) => ({
 
                 <div class="grid gap-8 p-6 lg:grid-cols-[1.1fr_0.9fr]">
                     <div>
-                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">
+                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-700 dark:text-tokyo-blue">
                             {{ activePortfolio.client_name }}
                         </p>
-                        <h3 class="mt-2 text-2xl font-bold text-zinc-950">{{ activePortfolio.title }}</h3>
-                        <p class="mt-4 text-sm leading-6 text-zinc-600">
+                        <h3 class="mt-2 text-2xl font-bold text-zinc-950 dark:text-tokyo-text">{{ activePortfolio.title }}</h3>
+                        <p class="mt-4 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
                             {{ activePortfolio.description }}
                         </p>
                     </div>
 
                     <div>
-                        <p class="text-sm font-bold uppercase tracking-normal text-zinc-500">Teknologi</p>
+                        <p class="text-sm font-bold uppercase tracking-normal text-zinc-500 dark:text-tokyo-comment">Teknologi</p>
                         <div class="mt-3 flex flex-wrap gap-2">
                             <span
                                 v-for="technology in activePortfolio.technologies"
                                 :key="technology"
-                                class="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800"
+                                class="rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-800 dark:bg-tokyo-blue/15 dark:text-tokyo-blue"
                             >
                                 {{ technology }}
                             </span>
                         </div>
 
                         <div v-if="activePortfolioImages.length > 1" class="mt-6">
-                            <p class="text-sm font-bold uppercase tracking-normal text-zinc-500">Galeri</p>
+                            <p class="text-sm font-bold uppercase tracking-normal text-zinc-500 dark:text-tokyo-comment">Galeri</p>
                             <div class="mt-3 grid grid-cols-3 gap-2">
                                 <button
                                     v-for="(image, index) in activePortfolioImages"
                                     :key="image.id"
                                     type="button"
-                                    class="overflow-hidden rounded-lg border"
-                                    :class="selectedPortfolioImageIndex === index ? 'border-emerald-500' : 'border-zinc-200'"
+                                    class="overflow-hidden rounded-lg border focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-surface"
+                                    :class="selectedPortfolioImageIndex === index ? 'border-emerald-500 dark:border-tokyo-blue' : 'border-zinc-200 dark:border-tokyo-border'"
                                     @click="selectedPortfolioImageIndex = index"
                                 >
                                     <img :src="image.url" :alt="image.alt_text" class="h-20 w-full object-cover" />
@@ -894,44 +936,48 @@ const serviceIconLabel = (icon) => ({
         </Modal>
 
         <Modal :show="Boolean(activeTeamMember)" max-width="lg" @close="closeTeamMember">
-            <div v-if="activeTeamMember" class="bg-white">
-                <img
-                    :src="activeTeamMember.photo_url"
-                    :alt="activeTeamMember.name"
-                    class="h-72 w-full object-cover"
-                />
-                <div class="p-6">
-                    <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">
-                        {{ activeTeamMember.role }}
-                    </p>
-                    <h3 class="mt-2 text-2xl font-bold text-zinc-950">{{ activeTeamMember.name }}</h3>
-                    <p class="mt-4 text-sm leading-6 text-zinc-600">
-                        {{ activeTeamMember.description }}
-                    </p>
+            <div v-if="activeTeamMember" class="bg-white p-5 dark:bg-tokyo-surface sm:p-6">
+                <div class="grid gap-5 sm:grid-cols-[9rem_1fr] sm:items-start">
+                    <img
+                        :src="activeTeamMember.photo_url"
+                        :alt="activeTeamMember.name"
+                        class="mx-auto h-28 w-28 rounded-full border-4 border-white object-cover object-top shadow-md ring-1 ring-zinc-200 dark:border-tokyo-surface dark:ring-tokyo-border sm:h-36 sm:w-36"
+                    />
+                    <div>
+                        <p class="text-center text-sm font-bold uppercase tracking-normal text-emerald-700 dark:text-tokyo-blue sm:text-left">
+                            {{ activeTeamMember.role }}
+                        </p>
+                        <h3 class="mt-2 text-center text-2xl font-bold text-zinc-950 dark:text-tokyo-text sm:text-left">
+                            {{ activeTeamMember.name }}
+                        </h3>
+                        <p class="mt-4 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
+                            {{ activeTeamMember.description }}
+                        </p>
 
-                    <div class="mt-6 grid gap-3 text-sm text-zinc-700">
-                        <a
-                            v-if="activeTeamMember.social_links?.linkedin"
-                            :href="activeTeamMember.social_links.linkedin"
-                            target="_blank"
-                            rel="noreferrer"
-                            class="font-semibold text-emerald-700 hover:text-emerald-900"
-                        >
-                            LinkedIn
-                        </a>
-                        <a
-                            v-if="activeTeamMember.social_links?.github"
-                            :href="activeTeamMember.social_links.github"
-                            target="_blank"
-                            rel="noreferrer"
-                            class="font-semibold text-emerald-700 hover:text-emerald-900"
-                        >
-                            GitHub
-                        </a>
-                    </div>
+                        <div class="mt-5 flex flex-wrap justify-center gap-3 text-sm text-zinc-700 dark:text-tokyo-muted sm:justify-start">
+                            <a
+                                v-if="activeTeamMember.social_links?.linkedin"
+                                :href="activeTeamMember.social_links.linkedin"
+                                target="_blank"
+                                rel="noreferrer"
+                                class="rounded-lg border border-zinc-200 px-3 py-2 font-semibold text-emerald-700 hover:border-emerald-300 hover:text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-tokyo-border dark:text-tokyo-blue dark:hover:border-tokyo-blue dark:hover:text-tokyo-cyan dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-surface"
+                            >
+                                LinkedIn
+                            </a>
+                            <a
+                                v-if="activeTeamMember.social_links?.github"
+                                :href="activeTeamMember.social_links.github"
+                                target="_blank"
+                                rel="noreferrer"
+                                class="rounded-lg border border-zinc-200 px-3 py-2 font-semibold text-emerald-700 hover:border-emerald-300 hover:text-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-tokyo-border dark:text-tokyo-blue dark:hover:border-tokyo-blue dark:hover:text-tokyo-cyan dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-surface"
+                            >
+                                GitHub
+                            </a>
+                        </div>
 
-                    <div class="mt-6">
-                        <BaseButton type="button" variant="secondary" @click="closeTeamMember">Tutup</BaseButton>
+                        <div class="mt-5 flex justify-center sm:justify-start">
+                            <BaseButton type="button" variant="secondary" @click="closeTeamMember">Tutup</BaseButton>
+                        </div>
                     </div>
                 </div>
             </div>

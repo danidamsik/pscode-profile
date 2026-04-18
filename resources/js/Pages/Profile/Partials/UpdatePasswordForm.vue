@@ -36,9 +36,9 @@ const updatePassword = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-bold text-zinc-950">Ubah Password</h2>
+            <h2 class="text-lg font-bold text-zinc-950 dark:text-tokyo-text">Ubah Password</h2>
 
-            <p class="mt-1 text-sm leading-6 text-zinc-600">
+            <p class="mt-1 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">
                 Gunakan password yang kuat agar akun tetap aman.
             </p>
         </header>
@@ -59,33 +59,35 @@ const updatePassword = () => {
                 <InputError :message="form.errors.current_password" class="mt-2" />
             </div>
 
-            <div>
-                <InputLabel for="password" value="Password Baru" />
+            <div class="grid gap-5 md:grid-cols-2">
+                <div>
+                    <InputLabel for="password" value="Password Baru" />
 
-                <TextInput
-                    id="password"
-                    ref="passwordInput"
-                    v-model="form.password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
+                    <TextInput
+                        id="password"
+                        ref="passwordInput"
+                        v-model="form.password"
+                        type="password"
+                        class="mt-1 block w-full"
+                        autocomplete="new-password"
+                    />
 
-                <InputError :message="form.errors.password" class="mt-2" />
-            </div>
+                    <InputError :message="form.errors.password" class="mt-2" />
+                </div>
 
-            <div>
-                <InputLabel for="password_confirmation" value="Konfirmasi Password" />
+                <div>
+                    <InputLabel for="password_confirmation" value="Konfirmasi Password" />
 
-                <TextInput
-                    id="password_confirmation"
-                    v-model="form.password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                />
+                    <TextInput
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        class="mt-1 block w-full"
+                        autocomplete="new-password"
+                    />
 
-                <InputError :message="form.errors.password_confirmation" class="mt-2" />
+                    <InputError :message="form.errors.password_confirmation" class="mt-2" />
+                </div>
             </div>
 
             <div class="flex items-center gap-4">
@@ -97,7 +99,7 @@ const updatePassword = () => {
                     leave-active-class="transition ease-in-out"
                     leave-to-class="opacity-0"
                 >
-                    <p v-if="form.recentlySuccessful" class="text-sm text-zinc-600">Password tersimpan.</p>
+                    <p v-if="form.recentlySuccessful" class="text-sm text-zinc-600 dark:text-tokyo-muted">Password tersimpan.</p>
                 </Transition>
             </div>
         </form>

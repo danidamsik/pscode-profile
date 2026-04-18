@@ -1,18 +1,33 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import UserAvatar from '@/Components/UserAvatar.vue';
+import { computed, onMounted, ref } from 'vue';
 
 const sidebarOpen = ref(false);
 
 const links = [
-    { label: 'Dashboard', routeName: 'admin.dashboard' },
+    { label: 'Dashboard', routeName: 'admin.dashboard', heading: 'Dashboard Admin' },
     { label: 'Portfolio', routeName: 'admin.portfolios.index' },
     { label: 'Testimoni', routeName: 'admin.testimonials.index' },
     { label: 'Blog', routeName: 'admin.blogs.index' },
     { label: 'Kontak', routeName: 'admin.contacts.index' },
     { label: 'Tim', routeName: 'admin.team-members.index' },
 ];
+
+const accountLinks = [
+    { label: 'Profile', routeName: 'profile.edit', heading: 'Pengaturan Akun Admin' },
+];
+
+const isLinkActive = (link) => route().current(link.routeName);
+
+const currentHeading = computed(() => {
+    const currentLink = [...links, ...accountLinks].find((link) => isLinkActive(link));
+
+    return currentLink?.heading ?? currentLink?.label ?? 'Admin Panel';
+});
+
+onMounted(() => {
+    document.documentElement.classList.remove('dark');
+});
 </script>
 
 <template>
@@ -39,15 +54,21 @@ const links = [
                     :key="link.routeName"
                     :href="route(link.routeName)"
                     class="rounded-lg px-4 py-3 text-sm font-semibold transition"
-                    :class="route().current(link.routeName) ? 'bg-emerald-600 text-white' : 'text-zinc-700 hover:bg-zinc-100'"
+                    :class="isLinkActive(link) ? 'bg-emerald-600 text-white' : 'text-zinc-700 hover:bg-zinc-100'"
                 >
                     {{ link.label }}
                 </Link>
             </nav>
 
             <div class="mt-8 border-t border-zinc-200 pt-5">
-                <Link :href="route('profile.edit')" class="block rounded-lg px-4 py-3 text-sm font-semibold text-zinc-700 hover:bg-zinc-100">
-                    Profile
+                <Link
+                    v-for="link in accountLinks"
+                    :key="link.routeName"
+                    :href="route(link.routeName)"
+                    class="block rounded-lg px-4 py-3 text-sm font-semibold transition"
+                    :class="isLinkActive(link) ? 'bg-emerald-600 text-white' : 'text-zinc-700 hover:bg-zinc-100'"
+                >
+                    {{ link.label }}
                 </Link>
                 <Link
                     :href="route('logout')"
@@ -63,16 +84,15 @@ const links = [
         <div class="lg:pl-72">
             <header class="sticky top-0 z-30 border-b border-zinc-200 bg-white">
                 <div class="flex min-h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-                    <button type="button" class="rounded-lg border border-zinc-300 px-3 py-2 lg:hidden" @click="sidebarOpen = true">
-                        Menu
-                    </button>
-                    <div class="flex items-center gap-3">
-                        <UserAvatar :user="$page.props.auth.user" size="sm" />
+                    <div class="flex items-center gap-4">
+                        <button type="button" class="rounded-lg border border-zinc-300 px-3 py-2 lg:hidden" @click="sidebarOpen = true">
+                            Menu
+                        </button>
                         <div>
-                            <p class="text-sm text-zinc-500">Admin Panel</p>
-                            <p class="font-bold">{{ $page.props.auth.user.name }}</p>
+                            <h1 class="text-lg font-bold text-zinc-950">{{ currentHeading }}</h1>
                         </div>
                     </div>
+
                     <Link href="/" class="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:border-zinc-950">
                         Website
                     </Link>

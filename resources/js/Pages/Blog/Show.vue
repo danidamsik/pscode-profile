@@ -63,11 +63,11 @@ const galleryImages = computed(() => props.blog.images ?? []);
             <article class="mx-auto max-w-4xl">
                 <BaseButton :href="route('blog.index')" variant="secondary">Kembali ke Blog</BaseButton>
 
-                <p class="mt-10 text-sm font-bold uppercase tracking-normal text-emerald-700">
+                <p class="mt-10 text-sm font-bold uppercase tracking-normal text-emerald-700 dark:text-tokyo-blue">
                     {{ formatDate(blog.published_at) }}
                 </p>
-                <h1 class="mt-4 text-4xl font-bold tracking-normal text-zinc-950">{{ blog.title }}</h1>
-                <p v-if="blog.excerpt" class="mt-5 text-lg leading-8 text-zinc-600">{{ blog.excerpt }}</p>
+                <h1 class="mt-4 text-4xl font-bold tracking-normal text-zinc-950 dark:text-tokyo-text">{{ blog.title }}</h1>
+                <p v-if="blog.excerpt" class="mt-5 text-lg leading-8 text-zinc-600 dark:text-tokyo-muted">{{ blog.excerpt }}</p>
 
                 <img
                     :src="resolveBlogImage(blog.thumbnail)"
@@ -75,7 +75,7 @@ const galleryImages = computed(() => props.blog.images ?? []);
                     class="mt-10 h-80 w-full rounded-lg object-cover"
                 />
 
-                <div class="mt-10 grid gap-5 text-base leading-8 text-zinc-700">
+                <div class="mt-10 grid gap-5 text-base leading-8 text-zinc-700 dark:text-tokyo-muted">
                     <p v-for="paragraph in contentParagraphs" :key="paragraph">
                         {{ paragraph }}
                     </p>
@@ -95,17 +95,17 @@ const galleryImages = computed(() => props.blog.images ?? []);
 
         <SectionContainer v-if="latestBlogs.length" tone="soft">
             <div class="mx-auto max-w-4xl">
-                <h2 class="text-2xl font-bold text-zinc-950">Artikel Lainnya</h2>
+                <h2 class="text-2xl font-bold text-zinc-950 dark:text-tokyo-text">Artikel Lainnya</h2>
                 <div class="mt-6 grid gap-4">
                     <Link
                         v-for="latest in latestBlogs"
                         :key="latest.id"
                         :href="route('blog.show', latest.slug)"
-                        class="rounded-lg border border-zinc-200 bg-white p-5 transition hover:border-emerald-300"
+                        class="rounded-lg border border-zinc-200 bg-white p-5 transition hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:border-tokyo-border dark:bg-tokyo-surface dark:focus:ring-tokyo-blue dark:focus:ring-offset-tokyo-bg"
                     >
-                        <p class="text-sm font-semibold text-emerald-700">{{ formatDate(latest.published_at) }}</p>
-                        <h3 class="mt-2 text-lg font-bold text-zinc-950">{{ latest.title }}</h3>
-                        <p class="mt-2 text-sm leading-6 text-zinc-600">{{ latest.excerpt }}</p>
+                        <p class="text-sm font-semibold text-emerald-700 dark:text-tokyo-blue">{{ formatDate(latest.published_at) }}</p>
+                        <h3 class="mt-2 text-lg font-bold text-zinc-950 dark:text-tokyo-text">{{ latest.title }}</h3>
+                        <p class="mt-2 text-sm leading-6 text-zinc-600 dark:text-tokyo-muted">{{ latest.excerpt }}</p>
                     </Link>
                 </div>
             </div>

@@ -24,7 +24,7 @@ const initials = computed(() => props.user?.initials || props.user?.name?.slice(
 
 <template>
     <span
-        class="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-100 font-bold uppercase text-emerald-800"
+        class="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-100 font-bold uppercase text-emerald-800 dark:bg-tokyo-blue/15 dark:text-tokyo-blue"
         :class="sizeClasses"
     >
         <img

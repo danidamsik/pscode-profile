@@ -10,12 +10,28 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        <script>
+            (() => {
+                let theme = null;
+
+                try {
+                    theme = localStorage.getItem('pscode-theme');
+                } catch (error) {
+                    theme = null;
+                }
+
+                const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+
+                document.documentElement.classList.toggle('dark', theme ? theme === 'dark' : prefersDark);
+            })();
+        </script>
+
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
-    <body class="font-sans antialiased">
+    <body class="bg-white font-sans antialiased dark:bg-tokyo-bg">
         @inertia
     </body>
 </html>

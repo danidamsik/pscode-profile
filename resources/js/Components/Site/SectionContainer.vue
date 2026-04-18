@@ -13,10 +13,10 @@ const props = defineProps({
 });
 
 const toneClasses = computed(() => ({
-    light: 'bg-white',
-    soft: 'bg-zinc-50',
-    dark: 'bg-zinc-950 text-white',
-    green: 'bg-emerald-950 text-white',
+    light: 'bg-white dark:bg-tokyo-bg',
+    soft: 'bg-zinc-50 dark:bg-tokyo-surface',
+    dark: 'bg-zinc-950 text-white dark:bg-tokyo-bg dark:text-tokyo-text',
+    green: 'bg-emerald-950 text-white dark:bg-tokyo-bg dark:text-tokyo-text',
 }[props.tone]));
 </script>
 

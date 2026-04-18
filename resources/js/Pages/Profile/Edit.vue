@@ -1,11 +1,10 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import UserAvatar from '@/Components/UserAvatar.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 defineProps({
@@ -18,65 +17,35 @@ defineProps({
 });
 
 const page = usePage();
-const user = computed(() => page.props.auth.user);
-const isAdmin = computed(() => user.value?.role === 'admin');
+const isAdmin = computed(() => page.props.auth.user?.role === 'admin');
 </script>
 
 <template>
     <Head title="Profile" />
 
     <AdminLayout v-if="isAdmin">
-        <div class="grid gap-8 xl:grid-cols-[0.85fr_1.15fr]">
-            <aside class="rounded-lg border border-zinc-200 bg-white p-6">
-                <div class="flex items-center gap-4">
-                    <UserAvatar :user="user" size="lg" />
-                    <div>
-                        <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">Profile Admin</p>
-                        <h1 class="mt-1 text-2xl font-bold text-zinc-950">{{ user.name }}</h1>
-                        <p class="mt-1 text-sm font-semibold text-zinc-500">{{ user.email }}</p>
-                    </div>
-                </div>
+        <div class="space-y-6">
+            <div class="max-w-3xl">
+                <p class="text-sm font-bold uppercase tracking-normal text-emerald-700">Profile</p>
+                <h1 class="mt-2 text-2xl font-bold text-zinc-950">Pengaturan Akun Admin</h1>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-zinc-600">
+                    Kelola identitas akun, password, dan keamanan akun dari satu halaman yang tertata.
+                </p>
+            </div>
 
-                <div class="mt-6 grid gap-3 text-sm">
-                    <div class="rounded-lg bg-zinc-50 p-4">
-                        <p class="font-semibold text-zinc-500">Role</p>
-                        <p class="mt-1 font-bold capitalize text-zinc-950">{{ user.role }}</p>
-                    </div>
-                    <div class="rounded-lg bg-zinc-50 p-4">
-                        <p class="font-semibold text-zinc-500">Akses</p>
-                        <p class="mt-1 font-bold text-zinc-950">Dashboard dan manajemen konten</p>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex flex-wrap gap-3">
-                    <Link
-                        :href="route('admin.dashboard')"
-                        class="rounded-lg bg-zinc-950 px-4 py-2 text-sm font-bold text-white hover:bg-zinc-800"
-                    >
-                        Dashboard
-                    </Link>
-                    <Link
-                        href="/"
-                        class="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-bold text-zinc-700 hover:border-zinc-950"
-                    >
-                        Website
-                    </Link>
-                </div>
-            </aside>
-
-            <div class="grid gap-6">
-                <section class="rounded-lg border border-zinc-200 bg-white p-6">
+            <div class="grid gap-6 xl:grid-cols-2 xl:items-start">
+                <section class="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm sm:p-8 xl:col-span-2">
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
                         :status="status"
                     />
                 </section>
 
-                <section class="rounded-lg border border-zinc-200 bg-white p-6">
+                <section class="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
                     <UpdatePasswordForm />
                 </section>
 
-                <section class="rounded-lg border border-red-100 bg-white p-6">
+                <section class="rounded-lg border border-red-100 bg-white p-6 shadow-sm sm:p-8">
                     <DeleteUserForm />
                 </section>
             </div>
@@ -85,12 +54,12 @@ const isAdmin = computed(() => user.value?.role === 'admin');
 
     <AuthenticatedLayout v-else>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-tokyo-text">Profile</h2>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="bg-white p-4 shadow dark:bg-tokyo-surface sm:rounded-lg sm:p-8">
                     <UpdateProfileInformationForm
                         :must-verify-email="mustVerifyEmail"
                         :status="status"
@@ -98,11 +67,11 @@ const isAdmin = computed(() => user.value?.role === 'admin');
                     />
                 </div>
 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="bg-white p-4 shadow dark:bg-tokyo-surface sm:rounded-lg sm:p-8">
                     <UpdatePasswordForm class="max-w-xl" />
                 </div>
 
-                <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+                <div class="bg-white p-4 shadow dark:bg-tokyo-surface sm:rounded-lg sm:p-8">
                     <DeleteUserForm class="max-w-xl" />
                 </div>
             </div>
